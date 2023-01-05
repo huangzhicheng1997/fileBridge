@@ -1,0 +1,13 @@
+syntax = "proto3";
+option java_package = "com.github.fileBridge.common.proto";
+import "Event.proto";
+import "Res.proto";
+
+
+service EventService{
+
+  rpc pushAsync(stream Event) returns (Res){};
+
+  rpc healthCheck(Event) returns(Res){};
+
+}

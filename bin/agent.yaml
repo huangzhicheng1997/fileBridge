@@ -1,0 +1,18 @@
+loglevel: info
+logDir: /home/fileBridge/logs
+schedulerThreads: 4
+
+rpc:
+  poolSize: 4 #grpc thread pool
+
+output:
+  rocketmq:
+    dir: /Users/xx/logs/rocketmqlogs
+    pattern: broker3.log
+    logPattern: '^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})([\s\S]*)'
+    readStrategy: latest  #latest  offset  fromHead
+    addresses: 192.168.2.229:9991
+    invalidateTime: 36000000 #seconds
+    scriptName: rocketmq-broker.lua
+    waterMark: 256-512
+    transTimeout: 500  #milliseconds

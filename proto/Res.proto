@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_package = "com.github.fileBridge.common.proto";
+
+message Res{
+  enum Status{
+    SUCCESS = 0;
+    FAILED = 1;
+  }
+
+  Status status=1;
+}
