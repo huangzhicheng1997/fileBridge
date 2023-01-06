@@ -1,6 +1,7 @@
 package com.github.fileBridge;
 
 
+import com.github.fileBridge.common.logger.GlobalLogger;
 import sun.misc.Signal;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class Starter {
     public static void main(String[] args) throws IOException {
         BootLoader bootLoader = new BootLoader();
         bootLoader.start();
+        GlobalLogger.getLogger().info("fileBridge started");
     }
 
 

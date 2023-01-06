@@ -46,6 +46,8 @@ public class EventService extends EventServiceGrpc.EventServiceImplBase {
                 );
                 responseObserver.onCompleted();
             }
+
+
         };
     }
 

@@ -128,7 +128,13 @@ public class EventLoop implements Shutdown {
 
 
     private void executePipe(Selector.Line line) throws IOException {
-        Event event = new Event(file.getAbsolutePath(), line.content(), new HashMap<>(), output, line.offset(), HashUtil.MD5(file.getAbsolutePath() + this.output + line.offset()));
+        Event event = new Event(
+                file.getAbsolutePath(),
+                line.content(),
+                new HashMap<>(),
+                output, line.offset(),
+                HashUtil.MD5(file.getAbsolutePath() + this.output + line.offset())
+        );
         new EventHandlerPipeline(eventHandlers).fireNext(event);
     }
 

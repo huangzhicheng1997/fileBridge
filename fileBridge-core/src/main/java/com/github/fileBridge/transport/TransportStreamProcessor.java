@@ -1,9 +1,11 @@
 package com.github.fileBridge.transport;
 
 import com.github.fileBridge.Looper;
+import com.github.fileBridge.common.functions.NoResultFunc;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import com.github.fileBridge.common.Event;
 import com.github.fileBridge.common.proto.EventOuterClass;
+import com.github.fileBridge.common.proto.ResOuterClass;
 import com.github.fileBridge.event.EventLoop;
 import com.github.fileBridge.handler.WaterMarkStatus;
 
@@ -48,18 +50,42 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
         var waitControl = new CountDownLatch(1);
         var needRetry = new AtomicBoolean();
         var streamObserver = client.pushAsync(context -> {
-            if (context.completed) {
+            //成功执行的方法
+            var successThen = (NoResultFunc) () -> {
                 needRetry.set(false);
                 waitControl.countDown();
+            };
+            //失败执行的方法
+            var failedThen = (NoResultFunc) () -> {
+                needRetry.set(true);
+                loadbalancer.reportUnHealthy(client);
+                GlobalLogger.getLogger().error("connection error.", context.throwable);
+                waitControl.countDown();
+            };
+            //协议错误执行的方法
+            var unExpect = (NoResultFunc) () -> {
+                needRetry.set(true);
+                GlobalLogger.getLogger().error("illegal protocol,because no return value when stream completed.");
+                waitControl.countDown();
+            };
+
+            if (context.completed && context.res == null) {
+                unExpect.invoke();
+                return;
+            }
+            if (context.completed) {
+                ResOuterClass.Res.Status status = context.res.getStatus();
+                switch (status) {
+                    case SUCCESS -> successThen.invoke();
+                    case FAILED -> failedThen.invoke();
+                }
                 return;
             }
             if (context.throwable != null) {
-                needRetry.set(true);
-                loadbalancer.reportUnHealthy(client);
-                GlobalLogger.getLogger().error("push error.", context.throwable);
-                waitControl.countDown();
+                failedThen.invoke();
             }
         });
+
         var block = block();
         if (block.size() == 0) {
             return;

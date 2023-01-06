@@ -42,6 +42,7 @@ public class TransportClient {
             public void onNext(ResOuterClass.Res value) {
                 var observerContext = new ObserverContext();
                 observerContext.res = value;
+                observerContext.completed = true;
                 listener.listen(observerContext);
             }
 
@@ -54,9 +55,7 @@ public class TransportClient {
 
             @Override
             public void onCompleted() {
-                var ctx = new ObserverContext();
-                ctx.completed = true;
-                listener.listen(ctx);
+
             }
         };
         return (CallStreamObserver<EventOuterClass.Event>) stub.pushAsync(streamObserver);
