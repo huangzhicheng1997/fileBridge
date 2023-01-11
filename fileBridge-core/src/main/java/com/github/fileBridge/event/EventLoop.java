@@ -62,7 +62,6 @@ public class EventLoop implements Shutdown {
         this.eventLoopExecutor = eventLoopExecutor;
         this.bootLoader = bootLoader;
         this.offsetRepository = new OffsetRepository(file, this, readStrategy);
-
         this.selector = new Selector(file, offsetRepository.readOffset());
         this.loopBuffer = Unpooled.buffer();
         this.eventHandlers.addAll(List.of(handlers));

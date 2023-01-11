@@ -1,5 +1,6 @@
 package com.github.fileBridge.common.utils;
 
+import com.github.fileBridge.common.exception.NotReadyException;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import io.netty.buffer.ByteBufInputStream;
 
@@ -61,7 +62,7 @@ public class HashUtil {
      */
     public static String logHash(File logFile) throws IOException {
         if (logFile.length() == 0 || !logFile.exists()) {
-            throw new FileNotFoundException(logFile.getAbsolutePath());
+            throw new NotReadyException(logFile.getAbsolutePath());
         }
         try (var reader = new BufferedReader(new FileReader(logFile))) {
             String line = reader.readLine();
