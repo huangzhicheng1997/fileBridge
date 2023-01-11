@@ -59,21 +59,16 @@
     <profile>
       <id>jar</id>
       <properties>
+        <os.detected.arch>x86_64</os.detected.arch>
+        <os.detected.name>osx</os.detected.name>
         <image.name>fileBridge</image.name>
+        <os.detected.classifier>osx-x86_64</os.detected.classifier>
         <native.image.switch>true</native.image.switch>
       </properties>
     </profile>
     <profile>
       <id>native</id>
       <properties>
-        <os.detected.arch>x86_64</os.detected.arch>
-        <os.detected.release.like.centos>true</os.detected.release.like.centos>
-        <os.detected.classifier>linux-x86_64</os.detected.classifier>
-        <os.detected.release.like.fedora>true</os.detected.release.like.fedora>
-        <os.detected.release.like.rhel>true</os.detected.release.like.rhel>
-        <os.detected.release>centos</os.detected.release>
-        <os.detected.release.version>7</os.detected.release.version>
-        <os.detected.name>linux</os.detected.name>
         <image.name>fileBridge</image.name>
         <native.image.switch>false</native.image.switch>
       </properties>

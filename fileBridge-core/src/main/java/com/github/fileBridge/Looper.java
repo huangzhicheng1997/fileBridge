@@ -1,5 +1,7 @@
 package com.github.fileBridge;
 
+import com.github.fileBridge.common.Shutdown;
+import com.github.fileBridge.common.exception.ShutdownSignal;
 import com.github.fileBridge.common.functions.SafeRunnable;
 import com.github.fileBridge.common.logger.GlobalLogger;
 
@@ -56,6 +58,8 @@ public class Looper implements Executor {
                 target.run();
             }
             LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1));
+        } catch (ShutdownSignal ignored) {
+
         } catch (Throwable throwable) {
             GlobalLogger.getLogger().error("error", throwable);
         }

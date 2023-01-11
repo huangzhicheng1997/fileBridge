@@ -8,11 +8,11 @@ rpc:
 output:
   rocketmq:
     dir: /Users/huangzhicheng/logs/rocketmqlogs
-    pattern: broker3.log
+    pattern: test[\s\S]*.log
     logPattern: '^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})([\s\S]*)'
-    readStrategy: fromHead  #latest  offset  fromHead
+    readStrategy: offset  #latest  offset  fromHead
     addresses: localhost:9999
     invalidateTime: 36000000 #seconds
     scriptName: rocketmq-broker.lua
-    waterMark: 256-512
+    waterMark: 512-1024
     transTimeout: 500  #milliseconds

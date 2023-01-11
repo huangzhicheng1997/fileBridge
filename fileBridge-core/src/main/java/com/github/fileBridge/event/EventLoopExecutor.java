@@ -1,7 +1,7 @@
 package com.github.fileBridge.event;
 
 import com.github.fileBridge.common.Shutdown;
-import com.github.fileBridge.common.exception.ShutdownException;
+import com.github.fileBridge.common.exception.ShutdownSignal;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.internal.shaded.org.jctools.queues.MpscUnboundedArrayQueue;
@@ -9,7 +9,6 @@ import io.netty.util.internal.shaded.org.jctools.queues.MpscUnboundedArrayQueue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -140,7 +139,7 @@ public class EventLoopExecutor implements Shutdown {
                 eventTask.runnable.run();
                 //执行完的任务重新进入就绪状态，形成循环
                 exec(eventTask);
-            } catch (ShutdownException e) {
+            } catch (ShutdownSignal e) {
                 GlobalLogger.getLogger().info("EventTaskShutdown taskId is " + eventTask.id, e);
             } catch (Exception e) {
                 GlobalLogger.getLogger().error("eventLoop error", e);

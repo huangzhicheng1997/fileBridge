@@ -31,35 +31,23 @@ public final class EventOuterClass {
         getOutputBytes();
 
     /**
-     * <code>string absPath = 2;</code>
-     * @return The absPath.
-     */
-    java.lang.String getAbsPath();
-    /**
-     * <code>string absPath = 2;</code>
-     * @return The bytes for absPath.
-     */
-    com.google.protobuf.ByteString
-        getAbsPathBytes();
-
-    /**
-     * <code>string content = 3;</code>
+     * <code>string content = 2;</code>
      * @return The content.
      */
     java.lang.String getContent();
     /**
-     * <code>string content = 3;</code>
+     * <code>string content = 2;</code>
      * @return The bytes for content.
      */
     com.google.protobuf.ByteString
         getContentBytes();
 
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     int getStructCount();
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     boolean containsStruct(
         java.lang.String key);
@@ -70,12 +58,12 @@ public final class EventOuterClass {
     java.util.Map<java.lang.String, java.lang.String>
     getStruct();
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     java.util.Map<java.lang.String, java.lang.String>
     getStructMap();
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
 
     /* nullable */
@@ -84,19 +72,19 @@ java.lang.String getStructOrDefault(
         /* nullable */
 java.lang.String defaultValue);
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
 
     java.lang.String getStructOrThrow(
         java.lang.String key);
 
     /**
-     * <code>string id = 5;</code>
+     * <code>string id = 4;</code>
      * @return The id.
      */
     java.lang.String getId();
     /**
-     * <code>string id = 5;</code>
+     * <code>string id = 4;</code>
      * @return The bytes for id.
      */
     com.google.protobuf.ByteString
@@ -116,7 +104,6 @@ java.lang.String defaultValue);
     }
     private Event() {
       output_ = "";
-      absPath_ = "";
       content_ = "";
       id_ = "";
     }
@@ -143,7 +130,7 @@ java.lang.String defaultValue);
     protected com.google.protobuf.MapField internalGetMapField(
         int number) {
       switch (number) {
-        case 4:
+        case 3:
           return internalGetStruct();
         default:
           throw new RuntimeException(
@@ -196,48 +183,10 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int ABSPATH_FIELD_NUMBER = 2;
-    private volatile java.lang.Object absPath_;
-    /**
-     * <code>string absPath = 2;</code>
-     * @return The absPath.
-     */
-    @java.lang.Override
-    public java.lang.String getAbsPath() {
-      java.lang.Object ref = absPath_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        absPath_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string absPath = 2;</code>
-     * @return The bytes for absPath.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getAbsPathBytes() {
-      java.lang.Object ref = absPath_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        absPath_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CONTENT_FIELD_NUMBER = 3;
+    public static final int CONTENT_FIELD_NUMBER = 2;
     private volatile java.lang.Object content_;
     /**
-     * <code>string content = 3;</code>
+     * <code>string content = 2;</code>
      * @return The content.
      */
     @java.lang.Override
@@ -254,7 +203,7 @@ java.lang.String defaultValue);
       }
     }
     /**
-     * <code>string content = 3;</code>
+     * <code>string content = 2;</code>
      * @return The bytes for content.
      */
     @java.lang.Override
@@ -272,7 +221,7 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int STRUCT_FIELD_NUMBER = 4;
+    public static final int STRUCT_FIELD_NUMBER = 3;
     private static final class StructDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
           java.lang.String, java.lang.String> defaultEntry =
@@ -299,7 +248,7 @@ java.lang.String defaultValue);
       return internalGetStruct().getMap().size();
     }
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
 
     @java.lang.Override
@@ -317,7 +266,7 @@ java.lang.String defaultValue);
       return getStructMap();
     }
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     @java.lang.Override
 
@@ -325,7 +274,7 @@ java.lang.String defaultValue);
       return internalGetStruct().getMap();
     }
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     @java.lang.Override
 
@@ -338,7 +287,7 @@ java.lang.String defaultValue);
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, string&gt; struct = 4;</code>
+     * <code>map&lt;string, string&gt; struct = 3;</code>
      */
     @java.lang.Override
 
@@ -353,10 +302,10 @@ java.lang.String defaultValue);
       return map.get(key);
     }
 
-    public static final int ID_FIELD_NUMBER = 5;
+    public static final int ID_FIELD_NUMBER = 4;
     private volatile java.lang.Object id_;
     /**
-     * <code>string id = 5;</code>
+     * <code>string id = 4;</code>
      * @return The id.
      */
     @java.lang.Override
@@ -373,7 +322,7 @@ java.lang.String defaultValue);
       }
     }
     /**
-     * <code>string id = 5;</code>
+     * <code>string id = 4;</code>
      * @return The bytes for id.
      */
     @java.lang.Override
@@ -408,20 +357,17 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(output_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, output_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(absPath_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, absPath_);
-      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, content_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, content_);
       }
       com.google.protobuf.GeneratedMessageV3
         .serializeStringMapTo(
           output,
           internalGetStruct(),
           StructDefaultEntryHolder.defaultEntry,
-          4);
+          3);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, id_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, id_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -435,11 +381,8 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(output_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, output_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(absPath_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, absPath_);
-      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, content_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, content_);
       }
       for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
            : internalGetStruct().getMap().entrySet()) {
@@ -449,10 +392,10 @@ java.lang.String defaultValue);
             .setValue(entry.getValue())
             .build();
         size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(4, struct__);
+            .computeMessageSize(3, struct__);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, id_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, id_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -471,8 +414,6 @@ java.lang.String defaultValue);
 
       if (!getOutput()
           .equals(other.getOutput())) return false;
-      if (!getAbsPath()
-          .equals(other.getAbsPath())) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
       if (!internalGetStruct().equals(
@@ -492,8 +433,6 @@ java.lang.String defaultValue);
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + OUTPUT_FIELD_NUMBER;
       hash = (53 * hash) + getOutput().hashCode();
-      hash = (37 * hash) + ABSPATH_FIELD_NUMBER;
-      hash = (53 * hash) + getAbsPath().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
       if (!internalGetStruct().getMap().isEmpty()) {
@@ -613,7 +552,7 @@ java.lang.String defaultValue);
       protected com.google.protobuf.MapField internalGetMapField(
           int number) {
         switch (number) {
-          case 4:
+          case 3:
             return internalGetStruct();
           default:
             throw new RuntimeException(
@@ -624,7 +563,7 @@ java.lang.String defaultValue);
       protected com.google.protobuf.MapField internalGetMutableMapField(
           int number) {
         switch (number) {
-          case 4:
+          case 3:
             return internalGetMutableStruct();
           default:
             throw new RuntimeException(
@@ -653,8 +592,6 @@ java.lang.String defaultValue);
       public Builder clear() {
         super.clear();
         output_ = "";
-
-        absPath_ = "";
 
         content_ = "";
 
@@ -689,7 +626,6 @@ java.lang.String defaultValue);
         com.github.fileBridge.common.proto.EventOuterClass.Event result = new com.github.fileBridge.common.proto.EventOuterClass.Event(this);
         int from_bitField0_ = bitField0_;
         result.output_ = output_;
-        result.absPath_ = absPath_;
         result.content_ = content_;
         result.struct_ = internalGetStruct();
         result.struct_.makeImmutable();
@@ -746,10 +682,6 @@ java.lang.String defaultValue);
           output_ = other.output_;
           onChanged();
         }
-        if (!other.getAbsPath().isEmpty()) {
-          absPath_ = other.absPath_;
-          onChanged();
-        }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
           onChanged();
@@ -792,28 +724,23 @@ java.lang.String defaultValue);
                 break;
               } // case 10
               case 18: {
-                absPath_ = input.readStringRequireUtf8();
+                content_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
               case 26: {
-                content_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 26
-              case 34: {
                 com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
                 struct__ = input.readMessage(
                     StructDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 internalGetMutableStruct().getMutableMap().put(
                     struct__.getKey(), struct__.getValue());
                 break;
-              } // case 34
-              case 42: {
+              } // case 26
+              case 34: {
                 id_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 42
+              } // case 34
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -907,85 +834,9 @@ java.lang.String defaultValue);
         return this;
       }
 
-      private java.lang.Object absPath_ = "";
-      /**
-       * <code>string absPath = 2;</code>
-       * @return The absPath.
-       */
-      public java.lang.String getAbsPath() {
-        java.lang.Object ref = absPath_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          absPath_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string absPath = 2;</code>
-       * @return The bytes for absPath.
-       */
-      public com.google.protobuf.ByteString
-          getAbsPathBytes() {
-        java.lang.Object ref = absPath_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          absPath_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string absPath = 2;</code>
-       * @param value The absPath to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAbsPath(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        absPath_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string absPath = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearAbsPath() {
-        
-        absPath_ = getDefaultInstance().getAbsPath();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string absPath = 2;</code>
-       * @param value The bytes for absPath to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAbsPathBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        absPath_ = value;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object content_ = "";
       /**
-       * <code>string content = 3;</code>
+       * <code>string content = 2;</code>
        * @return The content.
        */
       public java.lang.String getContent() {
@@ -1001,7 +852,7 @@ java.lang.String defaultValue);
         }
       }
       /**
-       * <code>string content = 3;</code>
+       * <code>string content = 2;</code>
        * @return The bytes for content.
        */
       public com.google.protobuf.ByteString
@@ -1018,7 +869,7 @@ java.lang.String defaultValue);
         }
       }
       /**
-       * <code>string content = 3;</code>
+       * <code>string content = 2;</code>
        * @param value The content to set.
        * @return This builder for chaining.
        */
@@ -1033,7 +884,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>string content = 3;</code>
+       * <code>string content = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearContent() {
@@ -1043,7 +894,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>string content = 3;</code>
+       * <code>string content = 2;</code>
        * @param value The bytes for content to set.
        * @return This builder for chaining.
        */
@@ -1086,7 +937,7 @@ java.lang.String defaultValue);
         return internalGetStruct().getMap().size();
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
 
       @java.lang.Override
@@ -1104,7 +955,7 @@ java.lang.String defaultValue);
         return getStructMap();
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
       @java.lang.Override
 
@@ -1112,7 +963,7 @@ java.lang.String defaultValue);
         return internalGetStruct().getMap();
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
       @java.lang.Override
 
@@ -1125,7 +976,7 @@ java.lang.String defaultValue);
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
       @java.lang.Override
 
@@ -1146,7 +997,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
 
       public Builder removeStruct(
@@ -1165,7 +1016,7 @@ java.lang.String defaultValue);
         return internalGetMutableStruct().getMutableMap();
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
       public Builder putStruct(
           java.lang.String key,
@@ -1180,7 +1031,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>map&lt;string, string&gt; struct = 4;</code>
+       * <code>map&lt;string, string&gt; struct = 3;</code>
        */
 
       public Builder putAllStruct(
@@ -1192,7 +1043,7 @@ java.lang.String defaultValue);
 
       private java.lang.Object id_ = "";
       /**
-       * <code>string id = 5;</code>
+       * <code>string id = 4;</code>
        * @return The id.
        */
       public java.lang.String getId() {
@@ -1208,7 +1059,7 @@ java.lang.String defaultValue);
         }
       }
       /**
-       * <code>string id = 5;</code>
+       * <code>string id = 4;</code>
        * @return The bytes for id.
        */
       public com.google.protobuf.ByteString
@@ -1225,7 +1076,7 @@ java.lang.String defaultValue);
         }
       }
       /**
-       * <code>string id = 5;</code>
+       * <code>string id = 4;</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
@@ -1240,7 +1091,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>string id = 5;</code>
+       * <code>string id = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
@@ -1250,7 +1101,7 @@ java.lang.String defaultValue);
         return this;
       }
       /**
-       * <code>string id = 5;</code>
+       * <code>string id = 4;</code>
        * @param value The bytes for id to set.
        * @return This builder for chaining.
        */
@@ -1348,12 +1199,11 @@ java.lang.String defaultValue);
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\013Event.proto\"\230\001\n\005Event\022\016\n\006output\030\001 \001(\t\022" +
-      "\017\n\007absPath\030\002 \001(\t\022\017\n\007content\030\003 \001(\t\022\"\n\006str" +
-      "uct\030\004 \003(\0132\022.Event.StructEntry\022\n\n\002id\030\005 \001(" +
-      "\t\032-\n\013StructEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002" +
-      " \001(\t:\0028\001B$\n\"com.github.fileBridge.common" +
-      ".protob\006proto3"
+      "\n\013Event.proto\"\207\001\n\005Event\022\016\n\006output\030\001 \001(\t\022" +
+      "\017\n\007content\030\002 \001(\t\022\"\n\006struct\030\003 \003(\0132\022.Event" +
+      ".StructEntry\022\n\n\002id\030\004 \001(\t\032-\n\013StructEntry\022" +
+      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001B$\n\"com.g" +
+      "ithub.fileBridge.common.protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1364,7 +1214,7 @@ java.lang.String defaultValue);
     internal_static_Event_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Event_descriptor,
-        new java.lang.String[] { "Output", "AbsPath", "Content", "Struct", "Id", });
+        new java.lang.String[] { "Output", "Content", "Struct", "Id", });
     internal_static_Event_StructEntry_descriptor =
       internal_static_Event_descriptor.getNestedTypes().get(0);
     internal_static_Event_StructEntry_fieldAccessorTable = new

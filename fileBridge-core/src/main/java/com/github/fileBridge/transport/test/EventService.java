@@ -24,10 +24,10 @@ public class EventService extends EventServiceGrpc.EventServiceImplBase {
                 if (structMap.isEmpty()){
                     String content = event.getContent();
                     System.out.print(content);
-                    System.out.println(event.getId()+","+event.getAbsPath());
+                    System.out.println(event.getId());
                 }else {
                     System.out.print(structMap);
-                    System.out.println(event.getId()+","+event.getAbsPath());
+                    System.out.println(event.getId());
                 }
 
                 System.out.println(a.incrementAndGet());

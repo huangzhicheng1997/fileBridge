@@ -5,6 +5,7 @@ import com.github.fileBridge.common.config.OutputYml;
 import com.github.fileBridge.common.exception.IllegalConfigException;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import com.github.fileBridge.common.utils.FileUtil;
+import com.github.fileBridge.common.utils.HashUtil;
 import com.github.fileBridge.common.utils.StringUtils;
 import com.github.fileBridge.event.EventLoop;
 import com.github.fileBridge.event.EventLoopExecutor;
@@ -19,6 +20,7 @@ import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -107,24 +109,24 @@ public class BootLoader {
             }
 
             Runnable task = () -> {
-                try {
-                    var pattern = Pattern.compile(regex);
-                    //取出符合正则,以及未失效的文件
-                    var list = FileUtil.newFile(dir).listFiles(file -> pattern.matcher(file.getName()).matches() && !isInvalidate(file.lastModified(), Long.parseLong(outputYml.getInvalidateTime())));
-                    if (list == null || list.length == 0) {
-                        return;
-                    }
-                    for (File file : list) {
-                        EventLoop exist = findEventLoop(file, outputName);
+                var pattern = Pattern.compile(regex);
+                //取出符合正则,以及未失效的文件
+                var list = FileUtil.newFile(dir).listFiles(file -> pattern.matcher(file.getName()).matches() && !isInvalidate(file.lastModified(), Long.parseLong(outputYml.getInvalidateTime())));
+                if (list == null || list.length == 0) {
+                    return;
+                }
+                for (var file : list) {
+                    try {
+                        var exist = findEventLoop(HashUtil.logHash(file), outputName);
                         if (null == exist) {
-                            EventLoop eventLoop = createEventLoop(file, outputYml, outputName);
+                            var eventLoop = createEventLoop(file, outputYml, outputName);
                             eventLoops.add(eventLoop);
                             registerEventHandlers(eventLoop, outputYml);
                             eventLoop.registerShutdownHooks(() -> {
                                 eventLoops.remove(eventLoop);
                             });
                             eventLoop.start();
-                            GlobalLogger.getLogger().info("eventLoop started file is :" + eventLoop.getFileAbs());
+                            GlobalLogger.getLogger().info("eventLoop started fileHash is :" + eventLoop.fileHash);
                         } else {
                             //长时间未更新的文件所绑定的eventLoop将被失效
                             boolean invalidate = isInvalidate(exist.getLastUpdateTime(), Long.parseLong(outputYml.getInvalidateTime()));
@@ -133,9 +135,9 @@ public class BootLoader {
                                 exist.shutdown();
                             }
                         }
+                    } catch (Throwable e) {
+                        GlobalLogger.getLogger().error("error", e);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
                 }
             };
             task.run();
@@ -151,8 +153,7 @@ public class BootLoader {
         if (StringUtils.isEmpty(logPattern)) {
             throw new IllegalArgumentException("logPattern is null.");
         }
-        OffsetRecorder offsetRecorder = new OffsetRecorder(file, outputYml.getReadStrategy());
-        return new EventLoop(file, eventLoopExecutor, outputName, offsetRecorder, this);
+        return new EventLoop(file, eventLoopExecutor, outputName, outputYml.getReadStrategy(),this);
     }
 
 
@@ -192,11 +193,11 @@ public class BootLoader {
         return System.currentTimeMillis() - lastUpdateTime >= TimeUnit.SECONDS.toMillis(invalidateSec);
     }
 
-    private EventLoop findEventLoop(File file, String outputName) {
+    private EventLoop findEventLoop(String fileHash, String outputName) {
         for (EventLoop eventLoop : eventLoops) {
             // 文件和输出都一样才代表相同的eventLoop
-            if (eventLoop.getFileAbs().equals(file.getAbsolutePath())
-                    && eventLoop.getOutput().equals(outputName)) {
+            if (fileHash.equals(eventLoop.fileHash)
+                    && outputName.equals(eventLoop.getOutput())) {
                 return eventLoop;
             }
         }

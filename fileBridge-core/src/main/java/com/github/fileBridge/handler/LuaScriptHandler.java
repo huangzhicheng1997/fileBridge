@@ -46,7 +46,7 @@ public class LuaScriptHandler implements EventHandler {
             }
             var content = getContent(event);
             if (null != content) {
-                event = new Event(event.absPath(), content, event.mapping(), event.output(), event.offset(), event.id());
+                event = new Event(content, event.mapping(), event.output(), event.offset(), event.id());
             }
             var mappings = getMappings(event);
             if (null != mappings) {

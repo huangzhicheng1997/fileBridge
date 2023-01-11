@@ -3,8 +3,7 @@ option java_package = "com.github.fileBridge.common.proto";
 
 message Event{
   string output = 1;
-  string absPath = 2;
-  string content = 3;
-  map<string, string> struct = 4;
-  string id = 5;
+  string content = 2;
+  map<string, string> struct = 3;
+  string id = 4;
 }

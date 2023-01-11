@@ -1,6 +1,7 @@
 package com.github.fileBridge.transport;
 
 import com.github.fileBridge.Looper;
+import com.github.fileBridge.common.exception.ShutdownSignal;
 import com.github.fileBridge.common.functions.NoResultFunc;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import com.github.fileBridge.common.Event;
@@ -31,7 +32,10 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
     private final int blockSize = Integer.parseInt(System.getProperty("blockSize", "10"));
 
     private final BlockingQueue<Event> retryQueue;
+
     private final int timeoutMillis;
+
+    private volatile boolean allowShutdown;
 
     public TransportStreamProcessor(int lowWaterMark, int highWaterMark, int timeoutMillis, Loadbalancer loadbalancer,
                                     EventLoop eventLoop) {
@@ -43,6 +47,10 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
     }
 
     private void loop() throws InterruptedException {
+        //eventloop关闭后 等待buffer中的数据清空即可关闭
+        if (allowShutdown && retryQueue.size() == 0 && eventBuffer.size() == 0) {
+            throw new ShutdownSignal();
+        }
         var client = loadbalancer.next();
         if (client == null) {
             return;
@@ -50,19 +58,16 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
         var waitControl = new CountDownLatch(1);
         var needRetry = new AtomicBoolean();
         var streamObserver = client.pushAsync(context -> {
-            //成功执行的方法
             var successThen = (NoResultFunc) () -> {
                 needRetry.set(false);
                 waitControl.countDown();
             };
-            //失败执行的方法
             var failedThen = (NoResultFunc) () -> {
                 needRetry.set(true);
                 loadbalancer.reportUnHealthy(client);
                 GlobalLogger.getLogger().error("connection error.", context.throwable);
                 waitControl.countDown();
             };
-            //协议错误执行的方法
             var unExpect = (NoResultFunc) () -> {
                 needRetry.set(true);
                 GlobalLogger.getLogger().error("illegal protocol,because no return value when stream completed.");
@@ -95,7 +100,7 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
                 break;
             }
             streamObserver.onNext(EventOuterClass.Event.newBuilder()
-                    .setOutput(ev.output()).setAbsPath(ev.absPath())
+                    .setOutput(ev.output())
                     .setContent(ev.content()).putAllStruct(ev.mapping())
                     .setId(ev.id())
                     .build());
@@ -166,6 +171,6 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
 
     @Override
     public void shutdown() {
-        eventTransLooper.shutdown();
+        allowShutdown = true;
     }
 }

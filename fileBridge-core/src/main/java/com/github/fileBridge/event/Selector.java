@@ -23,8 +23,6 @@ public class Selector {
 
     private final FileChannel fileChannel;
 
-    private final File file;
-
     private long committedOffset;
 
     public Selector(File file) throws IOException {
@@ -40,7 +38,6 @@ public class Selector {
         if (porterCap <= 0) {
             throw new IllegalArgumentException("porterCap<=0 is Illegal");
         }
-        this.file = file;
         this.porter = ByteBuffer.allocate(porterCap);
         this.fileChannel = new RandomAccessFile(file, "r").getChannel();
         this.fileChannel.position(seekFrom);
@@ -73,10 +70,6 @@ public class Selector {
         return lines;
     }
 
-    public String getFilePath() {
-        return file.getPath();
-    }
-
     public long pos() throws IOException {
         return this.fileChannel.position();
     }
@@ -89,8 +82,16 @@ public class Selector {
         this.fileChannel.close();
     }
 
-    public boolean isEOF() throws IOException {
-        return pos() == file.length();
+    public boolean isEOF() {
+        try {
+            return pos() == fileSize();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public long fileSize() throws IOException {
+        return fileChannel.size();
     }
 
     public long getCommittedOffset() {

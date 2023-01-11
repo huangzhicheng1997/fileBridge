@@ -3,13 +3,13 @@ package com.github.fileBridge.event;
 
 import com.github.fileBridge.BootLoader;
 import com.github.fileBridge.common.Shutdown;
-import com.github.fileBridge.common.exception.ShutdownException;
+import com.github.fileBridge.common.exception.ShutdownSignal;
 import com.github.fileBridge.common.functions.Hook;
 import com.github.fileBridge.common.logger.GlobalLogger;
 import com.github.fileBridge.common.Event;
 import com.github.fileBridge.common.utils.HashUtil;
 import com.github.fileBridge.handler.EventHandler;
-import com.github.fileBridge.OffsetRecorder;
+import com.github.fileBridge.OffsetRepository;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -45,22 +45,29 @@ public class EventLoop implements Shutdown {
 
     private final BootLoader bootLoader;
 
-    private final OffsetRecorder offsetRecorder;
+    private final OffsetRepository offsetRepository;
 
     protected final Selector selector;
 
+    private long lastUpdateTime;
+
+    public final String fileHash;
+
     public EventLoop(File file, EventLoopExecutor eventLoopExecutor,
-                     String output, OffsetRecorder offsetRecorder,
-                     BootLoader bootLoader, EventHandler... handlers) throws IOException {
+                     String output, String readStrategy,
+                     BootLoader bootLoader, EventHandler... handlers) throws IOException, NoSuchFieldException, IllegalAccessException {
         this.file = file;
+        this.fileHash = HashUtil.logHash(file);
+        this.lastUpdateTime = file.lastModified();
         this.eventLoopExecutor = eventLoopExecutor;
         this.bootLoader = bootLoader;
-        this.selector = new Selector(file, offsetRecorder.readOffset());
+        this.offsetRepository = new OffsetRepository(file, this, readStrategy);
+
+        this.selector = new Selector(file, offsetRepository.readOffset());
         this.loopBuffer = Unpooled.buffer();
         this.eventHandlers.addAll(List.of(handlers));
         this.task = new EventLoopExecutor.EventTask("EventLoop " + file.getName() + ":" + eventTypeIds.getAndIncrement(), this::runTask);
         this.output = output;
-        this.offsetRecorder = offsetRecorder;
         registerShutdownHooks(() -> {
             try {
                 selector.close();
@@ -93,8 +100,8 @@ public class EventLoop implements Shutdown {
     public void runTask() {
         if (isShutdown()) {
             afterShutdown();
-            GlobalLogger.getLogger().info("eventLoop was closed,file is " + file.getAbsolutePath());
-            throw new ShutdownException("eventLoop of " + selector.getFilePath() + " is interrupted");
+            GlobalLogger.getLogger().info("eventLoop was closed,fileHash is " + fileHash);
+            throw new ShutdownSignal("eventLoop of " + fileHash + " is interrupted");
         }
         try {
             List<Selector.Line> lines = selectLines();
@@ -103,10 +110,13 @@ public class EventLoop implements Shutdown {
                 eventLoopExecutor.suspend(this.task, 100);
                 return;
             }
+            if (!lines.isEmpty()) {
+                lastUpdateTime = System.currentTimeMillis();
+            }
             handleLines(lines);
         } catch (IOException e) {
             shutdown();
-            throw new ShutdownException("selector error so shutdown error is", e);
+            throw new ShutdownSignal("selector error so shutdown error is", e);
         }
     }
 
@@ -122,18 +132,17 @@ public class EventLoop implements Shutdown {
             }
         } catch (IOException e) {
             shutdown();
-            throw new ShutdownException("eventLoop of " + selector.getFilePath() + " is shutdown", e);
+            throw new ShutdownSignal("eventLoop of " + fileHash + " is shutdown", e);
         }
     }
 
 
     private void executePipe(Selector.Line line) throws IOException {
         Event event = new Event(
-                file.getAbsolutePath(),
                 line.content(),
                 new HashMap<>(),
                 output, line.offset(),
-                HashUtil.MD5(file.getAbsolutePath() + this.output + line.offset())
+                HashUtil.MD5(this.fileHash + line.content() + line.offset())
         );
         new EventHandlerPipeline(eventHandlers).fireNext(event);
     }
@@ -157,38 +166,31 @@ public class EventLoop implements Shutdown {
     }
 
 
-    public boolean isEOF() throws IOException {
+    public boolean isEOF() {
         return selector.isEOF();
     }
 
-    public String getFileAbs() {
-        return file.getAbsolutePath();
+    public OffsetRepository getOffsetRecorder() {
+        return offsetRepository;
     }
 
-    public OffsetRecorder getOffsetRecorder() {
-        return offsetRecorder;
-    }
-
-    public File file() {
-        return this.file;
-    }
-
-    public String getTaskId() {
-        return task.getId();
-    }
 
     @Override
     public void shutdown() {
         this.isShutdown = true;
     }
 
+    public long fileSize() throws IOException {
+        return selector.fileSize();
+    }
+
     public long getLastUpdateTime() {
-        return file.lastModified();
+        return this.lastUpdateTime;
     }
 
     public boolean isShutdown() {
         //文件不存在，说明eventLoop处于无效状态，此时关闭
-        return !file.exists() || isShutdown;
+        return (!file.exists() && isEOF()) || isShutdown;
     }
 
     public String getOutput() {

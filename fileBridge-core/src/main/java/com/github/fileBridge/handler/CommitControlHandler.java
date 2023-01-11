@@ -1,6 +1,6 @@
 package com.github.fileBridge.handler;
 
-import com.github.fileBridge.OffsetRecorder;
+import com.github.fileBridge.OffsetRepository;
 import com.github.fileBridge.common.Event;
 import com.github.fileBridge.event.EventHandlerPipeline;
 
@@ -10,15 +10,15 @@ import com.github.fileBridge.event.EventHandlerPipeline;
  */
 public class CommitControlHandler implements EventHandler {
 
-    private final OffsetRecorder offsetRecorder;
+    private final OffsetRepository offsetRepository;
 
-    public CommitControlHandler(OffsetRecorder offsetRecorder) {
-        this.offsetRecorder = offsetRecorder;
+    public CommitControlHandler(OffsetRepository offsetRepository) {
+        this.offsetRepository = offsetRepository;
     }
 
     @Override
     public void handle(Event event, EventHandlerPipeline pipeline) {
-        offsetRecorder.commitOffset(event);
+        offsetRepository.commitOffset(event);
         pipeline.fireNext(event);
     }
 }
