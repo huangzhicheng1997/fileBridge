@@ -17,53 +17,53 @@ public class Selector {
     public record Line(String content, long offset) {
     }
 
-    private final ByteBuffer porter;
+    private final ByteBuffer readBuffer;
 
-    public static final int porterCap = 256;
+    public static final int readBufferSize = 256;
 
     private final FileChannel fileChannel;
 
     private long committedOffset;
 
     public Selector(File file) throws IOException {
-        this(file, porterCap, 0, 0);
+        this(file, readBufferSize, 0, 0);
     }
 
 
     public Selector(File file, long seekFrom) throws IOException {
-        this(file, porterCap, seekFrom, 0);
+        this(file, readBufferSize, seekFrom, 0);
     }
 
-    public Selector(File file, int porterCap, long seekFrom, long readTimes) throws IOException {
-        if (porterCap <= 0) {
+    public Selector(File file, int readBufferSize, long seekFrom, long readTimes) throws IOException {
+        if (readBufferSize <= 0) {
             throw new IllegalArgumentException("porterCap<=0 is Illegal");
         }
-        this.porter = ByteBuffer.allocate(porterCap);
+        this.readBuffer = ByteBuffer.allocate(readBufferSize);
         this.fileChannel = new RandomAccessFile(file, "r").getChannel();
         this.fileChannel.position(seekFrom);
         this.committedOffset = seekFrom;
     }
 
 
-    public List<Line> selectLine(ByteBuf buffer) throws IOException {
+    public List<Line> selectLine(ByteBuf outputBuffer) throws IOException {
         long fileSize = fileChannel.size();
         //fileSize有时候为0?
         if (fileSize != 0 && fileChannel.position() != fileSize) {
-            ByteBuffer sliceBuffer = porter.slice();
+            ByteBuffer sliceBuffer = readBuffer.slice();
             fileChannel.read(sliceBuffer);
             sliceBuffer.flip();
-            buffer.writeBytes(sliceBuffer);
+            outputBuffer.writeBytes(sliceBuffer);
         }
         List<Line> lines = new ArrayList<>();
         while (true) {
-            int index = buffer.forEachByte(buffer.readerIndex(), buffer.writerIndex() - buffer.readerIndex(), ByteProcessor.FIND_LF);
+            int index = outputBuffer.forEachByte(outputBuffer.readerIndex(), outputBuffer.writerIndex() - outputBuffer.readerIndex(), ByteProcessor.FIND_LF);
             if (index == -1) {
                 break;
             } else {
                 this.committedOffset += index + 1;
                 byte[] strBytes = new byte[index + 1];
-                buffer.readBytes(strBytes);
-                buffer.discardReadBytes();
+                outputBuffer.readBytes(strBytes);
+                outputBuffer.discardReadBytes();
                 lines.add(new Line(new String(strBytes, StandardCharsets.UTF_8), committedOffset));
             }
         }

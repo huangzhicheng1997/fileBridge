@@ -68,14 +68,6 @@ public class EventLoopExecutor implements Shutdown {
                     continue;
                 }
                 waiting = loopTimes;
-                /*
-                 * READY          ->  RUNNING
-                 * RUNNING        ->  READY
-                 * RUNNING        ->  WAITING
-                 * RUNNING        ->  TIMED_WAITING
-                 * WAITING        ->  READY
-                 * TIMED_WAITING  ->  READY
-                 */
                 switch (eventTask.status) {
                     case READY, RUNNING -> {
                         commitTask(eventTask);

@@ -20,7 +20,6 @@ import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -165,7 +164,7 @@ public class BootLoader {
         eventLoop.registerEventHandler(new LuaScriptHandler(scriptsAccessor, outputYml));
         eventLoop.registerEventHandler(new EventTransHandler(transportProcessor(eventLoop, outputYml), eventLoop));
         //tail
-        eventLoop.registerEventHandler(new CommitControlHandler(eventLoop.getOffsetRecorder()));
+        eventLoop.registerEventHandler(new CommitControlHandler(eventLoop.offsetRecorder()));
 
     }
 
@@ -183,7 +182,7 @@ public class BootLoader {
         );
         eventLoop.registerShutdownHooks(() -> {
             transportProcessor.shutdown();
-            eventLoop.getOffsetRecorder().release();
+            eventLoop.offsetRecorder().release();
         });
         transportProcessor.start();
         return transportProcessor;
@@ -197,7 +196,7 @@ public class BootLoader {
         for (EventLoop eventLoop : eventLoops) {
             // 文件和输出都一样才代表相同的eventLoop
             if (fileHash.equals(eventLoop.fileHash)
-                    && outputName.equals(eventLoop.getOutput())) {
+                    && outputName.equals(eventLoop.output())) {
                 return eventLoop;
             }
         }

@@ -103,7 +103,7 @@ public class EventLoop implements Shutdown {
             throw new ShutdownSignal("eventLoop of " + fileHash + " is interrupted");
         }
         try {
-            List<Selector.Line> lines = selectLines();
+            List<Selector.Line> lines = selector.selectLine(loopBuffer);
             //没有找到一行完整的日志而且已经到达文件末尾，此时休眠100毫秒
             if (lines.isEmpty() && isEOF()) {
                 eventLoopExecutor.suspend(this.task, 100);
@@ -112,38 +112,19 @@ public class EventLoop implements Shutdown {
             if (!lines.isEmpty()) {
                 lastUpdateTime = System.currentTimeMillis();
             }
-            handleLines(lines);
+            for (Selector.Line line : lines) {
+                Event event = new Event(
+                        line.content(),
+                        new HashMap<>(),
+                        output, line.offset(),
+                        HashUtil.MD5(this.fileHash + line.content() + line.offset())
+                );
+                new EventHandlerPipeline(eventHandlers).fireNext(event);
+            }
         } catch (IOException e) {
             shutdown();
             throw new ShutdownSignal("selector error so shutdown error is", e);
         }
-    }
-
-    public List<Selector.Line> selectLines() throws IOException {
-        return selector.selectLine(loopBuffer);
-    }
-
-
-    public void handleLines(List<Selector.Line> lines) {
-        try {
-            for (Selector.Line line : lines) {
-                executePipe(line);
-            }
-        } catch (IOException e) {
-            shutdown();
-            throw new ShutdownSignal("eventLoop of " + fileHash + " is shutdown", e);
-        }
-    }
-
-
-    private void executePipe(Selector.Line line) throws IOException {
-        Event event = new Event(
-                line.content(),
-                new HashMap<>(),
-                output, line.offset(),
-                HashUtil.MD5(this.fileHash + line.content() + line.offset())
-        );
-        new EventHandlerPipeline(eventHandlers).fireNext(event);
     }
 
     public void registerShutdownHooks(Hook... hooks) {
@@ -155,7 +136,7 @@ public class EventLoop implements Shutdown {
             try {
                 this.shutdownHooks.forEach(Hook::hook);
             } catch (Exception e) {
-
+                GlobalLogger.getLogger().error("error", e);
             }
         }
     }
@@ -169,7 +150,7 @@ public class EventLoop implements Shutdown {
         return selector.isEOF();
     }
 
-    public OffsetRepository getOffsetRecorder() {
+    public OffsetRepository offsetRecorder() {
         return offsetRepository;
     }
 
@@ -192,7 +173,7 @@ public class EventLoop implements Shutdown {
         return (!file.exists() && isEOF()) || isShutdown;
     }
 
-    public String getOutput() {
+    public String output() {
         return output;
     }
 

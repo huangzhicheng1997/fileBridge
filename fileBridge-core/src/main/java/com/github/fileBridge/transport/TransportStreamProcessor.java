@@ -122,7 +122,7 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
             return;
         }
         //如果推送成功进行offset提交
-        eventLoop.getOffsetRecorder().commitOffset(block.get(block.size() - 1));
+        eventLoop.offsetRecorder().commitOffset(block.get(block.size() - 1));
     }
 
     private List<Event> block() throws InterruptedException {

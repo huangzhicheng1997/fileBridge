@@ -4,7 +4,6 @@ import com.github.fileBridge.common.Event;
 import com.github.fileBridge.event.EventHandlerPipeline;
 import com.github.fileBridge.event.EventLoop;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,7 +109,7 @@ public class MultiLinesMergeHandler implements EventHandler {
             return event;
         }
         //如果前一个event不是一个标准日志，例如堆栈信息中的一行，则说明buffer中的数据是需要合并的
-        Event mergedEvent = new Event(eventBuffer.stringBuffer(), new HashMap<>(), eventLoop.getOutput(), last.event.offset(), last.event.id());
+        Event mergedEvent = new Event(eventBuffer.stringBuffer(), new HashMap<>(), eventLoop.output(), last.event.offset(), last.event.id());
         eventBuffer.clear();
         return mergedEvent;
     }
