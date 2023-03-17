@@ -37,6 +37,7 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
 
     private volatile boolean allowShutdown;
 
+
     public TransportStreamProcessor(int lowWaterMark, int highWaterMark, int timeoutMillis, Loadbalancer loadbalancer,
                                     EventLoop eventLoop) {
         super(lowWaterMark, highWaterMark, loadbalancer);
@@ -56,10 +57,10 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
             return;
         }
         var waitControl = new CountDownLatch(1);
-        var needRetry = new AtomicBoolean();
+        var needRetry = new AtomicBoolean(false);
         var streamObserver = client.pushAsync(context -> {
             var successThen = (NoResultFunc) () -> {
-                needRetry.set(false);
+                needRetry.set(needRetry.get());
                 waitControl.countDown();
             };
             var failedThen = (NoResultFunc) () -> {
@@ -109,7 +110,7 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
         if (!waitControl.await(this.timeoutMillis, TimeUnit.MILLISECONDS)) {
             loadbalancer.reportUnHealthy(client);
             needRetry.set(true);
-            GlobalLogger.getLogger().warn("request timout then,limit is " + timeoutMillis + " milliseconds");
+            GlobalLogger.getLogger().warn("request timout ,limit is " + timeoutMillis + " milliseconds");
         }
         if (needRetry.get()) {
             //等1秒重试,防止频繁的重试
@@ -173,4 +174,6 @@ public class TransportStreamProcessor extends AbstractTransportProcessor {
     public void shutdown() {
         allowShutdown = true;
     }
+
+
 }
