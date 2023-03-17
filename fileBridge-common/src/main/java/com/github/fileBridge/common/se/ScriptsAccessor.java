@@ -6,6 +6,7 @@ import com.github.fileBridge.common.utils.StringUtils;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.luajc.LuaJC;
 import org.luaj.vm2.script.LuaScriptEngine;
 import org.luaj.vm2.script.LuaScriptEngineFactory;
 import org.luaj.vm2.script.LuajContext;

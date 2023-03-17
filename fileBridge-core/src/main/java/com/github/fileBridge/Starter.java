@@ -2,6 +2,8 @@ package com.github.fileBridge;
 
 
 import com.github.fileBridge.common.logger.GlobalLogger;
+import io.netty.channel.EventLoop;
+import io.netty.channel.nio.NioEventLoop;
 import sun.misc.Signal;
 
 import java.io.IOException;

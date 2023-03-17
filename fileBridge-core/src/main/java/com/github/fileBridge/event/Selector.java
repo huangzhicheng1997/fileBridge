@@ -19,7 +19,8 @@ public class Selector {
 
     private final ByteBuffer readBuffer;
 
-    public static final int readBufferSize = 256;
+    //4kb
+    public static final int readBufferSize = 4 * (1 << 10);
 
     private final FileChannel fileChannel;
 

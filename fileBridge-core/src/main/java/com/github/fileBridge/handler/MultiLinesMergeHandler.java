@@ -73,18 +73,10 @@ public class MultiLinesMergeHandler implements EventHandler {
         /*
          * 如果已经到文件末尾了,说明最后一条日志到此结束，可以把buffer 安全推出
          */
-        try {
-            if (eventLoop.isEOF()) {
-                TimeUnit.MILLISECONDS.sleep(1);
-                if (eventLoop.isEOF()) {
-                    Event pushedEvent = pushEvent();
-                    if (null != pushedEvent) ls.add(pushedEvent);
-                }
-            }
-        } catch (InterruptedException ignore) {
-
+        if (eventLoop.isEOF()) {
+            Event pushedEvent = pushEvent();
+            if (null != pushedEvent) ls.add(pushedEvent);
         }
-
         return ls;
     }
 

@@ -2,6 +2,7 @@ package com.github.fileBridge.event;
 
 
 import com.github.fileBridge.BootLoader;
+import com.github.fileBridge.actor.FiberScheduler;
 import com.github.fileBridge.common.Shutdown;
 import com.github.fileBridge.common.exception.ShutdownSignal;
 import com.github.fileBridge.common.functions.Hook;
@@ -37,11 +38,9 @@ public class EventLoop implements Shutdown {
 
     private volatile boolean isStart = false;
 
-    private final EventLoopExecutor.EventTask task;
+    private final FiberScheduler.Fiber fiber = new FiberScheduler.Fiber();
 
     private final String output;
-
-    private final EventLoopExecutor eventLoopExecutor;
 
     private final BootLoader bootLoader;
 
@@ -53,19 +52,17 @@ public class EventLoop implements Shutdown {
 
     public final String fileHash;
 
-    public EventLoop(File file, EventLoopExecutor eventLoopExecutor,
-                     String output, String readStrategy,
+    public EventLoop(File file, String output, String readStrategy,
                      BootLoader bootLoader, EventHandler... handlers) throws IOException, NoSuchFieldException, IllegalAccessException {
         this.file = file;
         this.fileHash = HashUtil.logHash(file);
         this.lastUpdateTime = file.lastModified();
-        this.eventLoopExecutor = eventLoopExecutor;
         this.bootLoader = bootLoader;
         this.offsetRepository = new OffsetRepository(file, this, readStrategy);
         this.selector = new Selector(file, offsetRepository.readOffset());
         this.loopBuffer = Unpooled.buffer();
         this.eventHandlers.addAll(List.of(handlers));
-        this.task = new EventLoopExecutor.EventTask("EventLoop " + file.getName() + ":" + eventTypeIds.getAndIncrement(), this::runTask);
+        this.fiber.setRunnable(this::runTask);
         this.output = output;
         registerShutdownHooks(() -> {
             try {
@@ -78,21 +75,21 @@ public class EventLoop implements Shutdown {
 
     public void start() {
         if (!isStart) {
-            eventLoopExecutor.exec(this.task);
+            FiberScheduler.getInstance().submit(fiber);
             isStart = true;
         }
     }
 
     public void suspendNext() {
-        eventLoopExecutor.suspend(this.task);
+         fiber.suspend();
     }
 
     public void suspendNext(int milliSec) {
-        eventLoopExecutor.suspend(this.task, milliSec);
+        fiber.suspend(milliSec);
     }
 
     public void resume() {
-        eventLoopExecutor.recover(this.task);
+        fiber.resume();
     }
 
 
@@ -106,7 +103,7 @@ public class EventLoop implements Shutdown {
             List<Selector.Line> lines = selector.selectLine(loopBuffer);
             //没有找到一行完整的日志而且已经到达文件末尾，此时休眠100毫秒
             if (lines.isEmpty() && isEOF()) {
-                eventLoopExecutor.suspend(this.task, 100);
+                fiber.suspend(100);
                 return;
             }
             if (!lines.isEmpty()) {

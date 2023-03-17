@@ -10,7 +10,6 @@ import com.github.fileBridge.common.utils.StringUtils;
 import com.github.fileBridge.event.EventLoop;
 import com.github.fileBridge.event.EventLoopExecutor;
 import com.github.fileBridge.common.se.ScriptsAccessor;
-import com.github.fileBridge.handler.CommitControlHandler;
 import com.github.fileBridge.handler.EventTransHandler;
 import com.github.fileBridge.handler.LuaScriptHandler;
 import com.github.fileBridge.handler.MultiLinesMergeHandler;
@@ -121,9 +120,7 @@ public class BootLoader {
                             var eventLoop = createEventLoop(file, outputYml, outputName);
                             eventLoops.add(eventLoop);
                             registerEventHandlers(eventLoop, outputYml);
-                            eventLoop.registerShutdownHooks(() -> {
-                                eventLoops.remove(eventLoop);
-                            });
+                            eventLoop.registerShutdownHooks(() -> eventLoops.remove(eventLoop));
                             eventLoop.start();
                             GlobalLogger.getLogger().info("eventLoop started fileHash is :" + eventLoop.fileHash);
                         } else {
@@ -152,19 +149,16 @@ public class BootLoader {
         if (StringUtils.isEmpty(logPattern)) {
             throw new IllegalArgumentException("logPattern is null.");
         }
-        return new EventLoop(file, eventLoopExecutor, outputName, outputYml.getReadStrategy(),this);
+        return new EventLoop(file, outputName, outputYml.getReadStrategy(), this);
     }
 
 
     private void registerEventHandlers(EventLoop eventLoop, OutputYml outputYml) {
         //注册handler
-        //head
         eventLoop.registerEventHandler(new MultiLinesMergeHandler(outputYml.getLogPattern(), eventLoop));
         //-----------自定义-----------
         eventLoop.registerEventHandler(new LuaScriptHandler(scriptsAccessor, outputYml));
         eventLoop.registerEventHandler(new EventTransHandler(transportProcessor(eventLoop, outputYml), eventLoop));
-        //tail
-        eventLoop.registerEventHandler(new CommitControlHandler(eventLoop.offsetRecorder()));
 
     }
 

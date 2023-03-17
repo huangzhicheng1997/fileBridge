@@ -13,6 +13,8 @@
         <module>fileBridge-core</module>
         <module>fileBridge-common</module>
         <module>fileBridge-devtools</module>
+        <module>fileBridge-actor</module>
+        <module>fileBridge-remoting</module>
     </modules>
     <profiles>
         <profile>
@@ -63,6 +65,11 @@
                 <groupId>com.github.fileBridge</groupId>
                 <artifactId>fileBridge-common</artifactId>
                 <version>${fileBridge.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jctools</groupId>
+                <artifactId>jctools-core</artifactId>
+                <version>2.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jline</groupId>
